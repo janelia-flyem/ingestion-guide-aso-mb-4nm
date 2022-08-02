@@ -1,0 +1,82 @@
+workflow-name: copysegmentation
+cluster-type: lsf
+
+# resource-manager:
+#   server: driver
+#   port: 5000
+#   config:
+#     read_reqs: 64
+#     read_data: 1e15  # unlimited
+#     write_reqs: 32
+#     write_data: 1e15  # unlimited
+
+exit-email:
+  send: true
+  addresses:
+  - JANELIA_USER
+  include-log: true
+
+input:
+  zarr:
+    path: /groups/aso/asolab/Z0419_25_Alpha3/data.zarr
+    dataset: /volumes/processed/neuron_glia/mushroom_body/fragments
+    store-type: DirectoryStore
+    out-of-bounds-access: permit-empty
+
+  geometry:
+    bounding-box: [[-1, -1, -1], [-1, -1, -1]]
+    message-block-shape: [512, 256, 256]
+    block-width: 256
+    available-scales: [0]
+
+  adapters:
+    # This will align it to the grayscale.
+    # .zattrs lists 'offset' of [0, 5400, 1500] (ZYX) in nm.
+    # We use voxels in this file.
+    translate: [375, 1350, 0]
+
+output:
+  dvid:
+    server: http://emdata6.int.janelia.org:8900
+    uuid: 'cc036e'
+    segmentation-name: segmentation
+    supervoxels: true
+    disable-indexing: true
+    write-empty-blocks: false
+    ingestion-mode: true
+
+    create-if-necessary: true
+    creation-settings:
+      versioned: true
+      tags: []
+      enable-index: true
+      compression: none  # Will use DVID label compression by default
+      max-scale: 7
+      voxel-size: 4.0
+      voxel-units: nanometers
+      background: 0
+
+  geometry:
+    message-block-shape: [512, 256, 256]
+    block-width: 64
+    available-scales: [0]
+
+copysegmentation:
+  block-statistics-file: block-statistics.h5
+  compute-block-statistics: true
+  pyramid-depth: 7
+  permit-inconsistent-pyramid: false
+  skip-scale-0-write: false
+  download-pre-downsampled: false
+  downsample-method: subsample
+  brick-compression: lz4_2x
+  write-empty-blocks: true
+  dont-overwrite-identical-blocks: false
+  slab-shape: [512, -1, -1]
+  slab-depth: -1
+  delay-minutes-between-slabs: 0
+  sparse-block-mask: ''
+  input-mask-labels: []
+  output-mask-labels: []
+  skip-masking-step: false
+  add-offset-to-ids: 0

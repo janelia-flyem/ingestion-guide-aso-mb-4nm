@@ -1,0 +1,114 @@
+# Yoshi Aso 4nm mushroom body
+
+[server]
+httpAddress = ":8900"
+rpcAddress = ":8901"
+webClient = "/optane/dvid/console"
+corsDomains = ["*"]
+#startJaneliaConfig = "http://config.int.janelia.org/importjson/dvid_servers/emdata4_8900"
+
+# Who to send email in case of panic
+[email]
+notify = ["katzw@janelia.hhmi.org"]
+username = "katzw@janelia.hhmi.org"
+password = ""
+server = "10.42.5.23"
+port = 25
+
+[logging]
+logfile = "/optane/dvid/aso.log"
+max_log_size = 500 # MB
+max_log_age = 360   # days
+
+[mutations]
+#logstore = "kafka:emdata4-cns"
+blobstore = "blobstore"
+jsonstore = "/data1/mutlogs/aso-json"
+
+[kafka]
+topicPrefix = "aso"
+#servers = ["kafka-dev.int.janelia.org:9092"] #["kafka.int.janelia.org:9092", "kafka2.int.janelia.org:9092", "kafka3.int.janelia.org:9092"]
+servers = ["kafka.int.janelia.org:9092", "kafka2.int.janelia.org:9092", "kafka3.int.janelia.org:9092"]
+#bufferSize = 1000000  # max messages in queue, default was 100,000
+
+[backend]
+    [backend.metadata]
+    store = "metadata"
+    log = "mutationlog"
+
+    [backend.default]
+    store = "mutable"
+    log = "mutationlog"
+
+    [backend.keyvalue]
+    store = "keyvalues"
+    log = "mutationlog"
+
+    [backend.tarsupervoxels]
+    store = "tarsupervoxels"
+    log = "mutationlog"
+
+    [backend.annotation]
+    store = "annotations"
+    log = "mutationlog"
+
+    [backend."type:meshes"]
+    store = "meshes"
+    log = "mutationlog"
+
+    [backend.labelmap]
+    store = "labelmaps"
+    log = "mutationlog"
+
+[store]
+    [store.mutationlog]
+    engine = "filelog"
+    path = "/data1/mutlogs/aso"
+
+    [store.metadata]
+    engine = "badger"
+    path = "/data1/dbs/aso/metadata"
+
+    [store.mutable]
+    engine = "badger"
+    path = "/data1/dbs/aso/default"
+
+    [store.labelmaps]
+    engine = "badger"
+    path = "/data1/dbs/aso/labelmaps"
+
+    [store.meshes]
+    engine = "badger"
+    path = "/data1/dbs/aso/meshes"
+
+    [store.keyvalues]
+    engine = "badger"
+    path = "/data1/dbs/aso/keyvalues"
+
+    [store.annotations]
+    engine = "badger"
+    path = "/data1/dbs/aso/annotations"
+
+    [store.tarsupervoxels]
+    engine = "badger"
+    path = "/data1/dbs/aso/tarsupervoxels"
+
+    [store.aso-grayscale]
+    engine = "ngprecomputed"
+    ref = "aso-z0419_25_alpha3-jpeg"
+    instance = "grayscale"
+
+#[mirror]
+#    [mirror.all]
+#    servers = ["http://emdata1.int.janelia.org:8900"]
+#
+
+#[cache]
+#    [cache.labelmap]
+#    size = 10000
+
+#[groupcache]
+#gb = 100
+#host = "http://10.40.4.163:9002"
+#peers = ["http://10.40.4.158:7002"]
+#instances = []

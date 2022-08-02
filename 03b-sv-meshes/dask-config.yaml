@@ -1,0 +1,34 @@
+jobqueue:
+  lsf:
+    processes: 32
+    cores: 32
+    ncpus: 32
+    memory: 480GB
+    
+    walltime: 24:00
+
+    mem: 0
+    use-stdin: true
+    log-directory: job-logs
+    local-directory: ''
+    death-timeout: 60
+    name: dask-worker
+
+    job-extra: ["-P flyem ", "-q local"]
+
+distributed:
+  scheduler:
+    work-stealing: true
+
+  # comm:
+  #   timeouts:
+  #     connect: 30s
+  #     tcp: 60s
+
+  worker:
+    daemon: false
+    memory:
+      target: 0.0
+      spill: 0.0
+      pause: 0.0
+      terminate: 0.0

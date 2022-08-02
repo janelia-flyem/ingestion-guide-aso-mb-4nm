@@ -1,0 +1,81 @@
+workflow-name: copygrayscale
+cluster-type: lsf
+
+input:
+  zarr:
+    path: /groups/aso/asolab/Z0419_25_Alpha3/raw.n5
+    dataset: volumes/raw/s0
+    store-type: N5Store
+
+    # Do we need an offset?
+    # The attributes file does list a 'translation'
+    global-offset: [0, 0, 0]
+    out-of-bounds-access: permit
+
+  geometry:
+    bounding-box: [[0, 0, 0], [11005, 9286, 9504]]
+    message-block-shape: [2048, 2048, 2048]
+    block-width: 128
+    available-scales: [0,1,2,3,4,5,6,7]
+
+  adapters:
+    # ditto... do we need to translate?
+    translate: [0, 0, 0]
+
+output:
+  tensorstore:
+    reinitialize-via: reopen
+    out-of-bounds-access: permit-empty
+    spec:
+      driver: neuroglancer_precomputed
+      create: true
+      open: true
+      kvstore:
+        driver: file
+        path: /groups/flyem/data/scratchspace/flyemflows/aso-mb-4nm/Z0419_25_Alpha3_jpeg
+      multiscale_metadata:
+        type: image
+        data_type: uint8
+        num_channels: 1
+      scale_metadata:
+        size: [11005, 9286, 9504]
+        encoding: jpeg
+        chunk_size: [64, 64, 64]
+        resolution: [4, 4, 4]
+        sharding:
+          "@type": neuroglancer_uint64_sharded_v1
+          data_encoding: raw
+          hash: identity
+          minishard_bits: 6
+          minishard_index_encoding: gzip
+          preshift_bits: 9
+          shard_bits: 15
+      recheck_cached_metadata: false
+      recheck_cached_data: false
+      data_copy_concurrency:
+        limit: 1
+    context:
+      cache_pool:
+        total_bytes_limit: 8589934592
+      data_copy_concurrency:
+        limit: 8
+      file_io_concurrency:
+        limit: 1
+
+  geometry:
+    bounding-box: [[0, 0, 0], [11005, 9286, 9504]]
+    message-block-shape: [2048, 2048, 2048]
+    block-width: 64
+    available-scales: [0,1,2,3,4,5,6,7]
+
+copygrayscale:
+  min-pyramid-scale: 0
+  max-pyramid-scale: 7
+  pyramid-source: copy
+  slab-depth: 2048
+  slab-axis: z
+  downsample-method: block-mean
+  starting-slice: 0
+  contrast-adjustment: none
+  fill-blocks: true
+  drop-empty-bricks: true

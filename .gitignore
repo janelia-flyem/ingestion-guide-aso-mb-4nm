@@ -1,0 +1,27 @@
+# Mesh directories, which often contain thousands of files
+ngmeshes/
+meshes/
+
+# flyemflows execution directories
+*[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]\.[0-9][0-9][0-9][0-9][0-9][0-9]/
+
+tmp/
+Z0419_25_Alpha3_jpeg/
+Z0419_25_Alpha3_jpeg_gzip/
+
+*.npy
+*.feather
+*.ngmesh
+*.obj
+*.drc
+*.pkl
+*.h5
+
+*.log
+*.log.*
+*.out
+
+*.csv
+*.parquet
+*.feather.gz
+*.gz

@@ -1,0 +1,50 @@
+workflow-name: gridmeshes
+cluster-type: lsf
+
+resource-manager:
+  server: driver
+  port: 5000
+  config:
+    read_reqs: 64
+    read_data: 1e15
+    write_reqs: 32
+    write_data: 1e15
+
+exit-email:
+  send: true
+  include-log: false
+
+input:
+  dvid:
+    server: http://emdata6.int.janelia.org:8900
+    uuid: 'cc036e'
+    segmentation-name: segmentation
+    supervoxels: true
+
+  geometry:
+    bounding-box: [[-1, -1, -1], [-1, -1, -1]]
+    message-block-shape: [512, 512, 512]
+    available-scales: [0,1,2,3,4,5,6,7]
+
+  adapters:
+    rescale-level: 1  # See rescale-before-write, below
+
+output:
+  tarsupervoxels:
+    instance: segmentation_sv_meshes
+    sync-to: segmentation
+    create-if-necessary: true
+
+gridmeshes:
+  slab-shape: [2048, 2048, 1024]
+  restart-at-slab: 0
+
+  mesh-parameters:
+    smoothing: 3
+    decimation: 0.02  # Reasonable for scale-1
+    compute-normals: false
+
+  rescale-before-write: 2.0  # SCALE 1
+  format: drc
+
+  skip-existing: false
