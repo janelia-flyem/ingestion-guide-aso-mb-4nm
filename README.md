@@ -270,7 +270,19 @@ cd load-agglomeration
 Neuroglancer isn't needed for proofreading, but it can be convenient for browsing and debugging.
 We can use a service to dynamically generate meshes for us, or we can pre-generate neuroglancer meshes using yet another `flyemflows` workflow.
 
-TODO: Document each option.
+**TODO: Document each option.**
+
+Either way, the first step is to create an empty `keyvalue` instance.  Even if we plan to use dynamically generated meshes (and therefore will not be populating the instance with content), neuroglancer won't know to display meshes for our data unless this instance exists.
+
+```python
+create_instance(
+    'http://emdata6.int.janelia.org:8900',
+    'cc036e',
+    'segmentation_meshes',
+    'keyvalue',
+    tags={'type': 'meshes'}
+)
+```
 
 ### Lock Agglo DVID UUID
 
